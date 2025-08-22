@@ -1,25 +1,33 @@
-# Stage 1: Build React + Vite App
-FROM node:18-alpine AS build
+# --- Stage 1: Builder ---
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+# Only copy package files first to optimize caching
+COPY package.json package-lock.json ./
 
+# Install dependencies (adds --legacy-peer-deps if required)
+RUN npm ci
+
+# Copy the rest of the code
 COPY . .
-RUN npm run build --legacy-peer-deps
 
-# Stage 2: Minimal runtime image
-FROM node:18-alpine
+# Run the build (adjust this if your build script is named differently)
+RUN npm run build
+
+# --- Stage 2: Production image ---
+FROM node:18-alpine AS production
 
 WORKDIR /app
 
-# Install "serve" to serve static files
+# Install only serve for lightweight serving of static files
 RUN npm install -g serve
 
-# Copy production build
-COPY --from=build /app/dist ./dist
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
 
-EXPOSE 3000
+# Expose the port the app will run on
+EXPOSE 4173
 
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Command to serve the built app
+CMD ["serve", "-s", "dist", "-l", "4173"]
