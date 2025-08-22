@@ -1,4 +1,4 @@
-# Stage 1: Build
+# Stage 1: Build React + Vite App
 FROM node:18-alpine AS build
 
 WORKDIR /app
@@ -9,15 +9,15 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve build using "serve"
+# Stage 2: Minimal runtime image
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install serve globally
+# Install "serve" to serve static files
 RUN npm install -g serve
 
-# Copy build output
+# Copy production build
 COPY --from=build /app/dist ./dist
 
 EXPOSE 3000
