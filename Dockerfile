@@ -7,7 +7,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build
+RUN npm run build --legacy-peer-deps
 
 # Stage 2: Minimal runtime image
 FROM node:18-alpine
