@@ -1,22 +1,22 @@
 # --- Stage 1: Builder ---
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 # Only copy package files first to optimize caching
 COPY package.json package-lock.json ./
 
-# Install dependencies (adds --legacy-peer-deps if required)
+# Install dependencies
 RUN npm ci
 
 # Copy the rest of the code
 COPY . .
 
-# Run the build (adjust this if your build script is named differently)
+# Run the build
 RUN npm run build
 
 # --- Stage 2: Production image ---
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
