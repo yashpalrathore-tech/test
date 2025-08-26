@@ -26,7 +26,7 @@ function App() {
         </p>
       </div>
       <p className="read-the-docs">
-        Auto Deply is done !
+        Auto Deply is done ! We have done it changes are live !
       </p>
     </>
   )
